@@ -1,5 +1,5 @@
 <form method="POST">
-  <label for="username">Phone number</label>
-	<input type="text" name="phone" id="phone" class="input" required="required" /><br />
+  <label for="username">Username</label>
+	<input type="text" name="username" id="username" class="input" required="required" /><br />
 	<input type="submit" value="Reset Password" class="button"><br />
 </form>

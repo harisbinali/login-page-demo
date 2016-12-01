@@ -5,5 +5,5 @@
   require_once('externalactions.php');
 ?>
 <head>
-  <title>Login SMS Demo</title>
+  <title><?php echo CAPTIVE_PORTAL_NAME; ?></title>
 </head>

@@ -1,66 +1,82 @@
 <?php
 
-function doAction( $action ) {
-  if($_SERVER['REQUEST_METHOD'] === 'GET'){
-    $actiondisplay = '_'.$action.'_form.php';
-    if( $action === "" ) {
-      $actiondisplay = DEFAULT_VIEW;
+  function doAction( $action ) {
+    if($_SERVER['REQUEST_METHOD'] === 'GET'){
+      $actiondisplay = '_'.$action.'_form.php';
+      if( $action === "" ) {
+        $actiondisplay = DEFAULT_VIEW;
+      };
+      require( $actiondisplay );
+    } elseif($_SERVER['REQUEST_METHOD'] === 'POST'){
+      switch( $action ) {
+        case "forgetpassword":
+          doActionForgetPassword();
+          break;
+        case "updatephone":
+          doActionUpdatePhone();
+          break;
+        case "login":
+        default:
+          doActionLogin();
+      };
     };
-    require( $actiondisplay );
-  } elseif($_SERVER['REQUEST_METHOD'] === 'POST'){
-    switch( $action ) {
-      case "forgetpassword":
-        doActionForgetPassword();
-        break;
-      case "login":
-      default:
-        doActionLogin();
+  };
+
+  function doActionLogin() {
+    $login = SCGQuery( "UserOnlineControl", "Login" );
+
+    $login['ResponseCode'] = "200";
+
+    if($login['ResponseCode'] === "200"){
+      echo "Login successful<br />";
+      #Check if phone number exists
+      $user = AptiloCCSQuery ( "viewUser" );
+      #If phone number exists
+      if( !$user['errors']['PhoneNumberDoesNotExist'] ){
+        # Redirect to default page
+        #echo $user['phonenumber'];
+      } else { #If phone number does not exist
+        # Prompt for phone number
+        require('_updatephone_form.php');
+      };
+    } else {
+      echo "<div id='errors'>",$login['ReplyMessage'],"</div>";
+      require('_login_form.php');
     };
   };
-};
 
-function doActionLogin() {
-  $login = SCGQuery( "UserOnlineControl", "Login" );
+  function doActionForgetPassword() {
+    $forgetpassword = AptiloCCSQuery( "viewUser" );
 
-  if($login['ResponseCode'] === "200"){
-    echo "Login successful";
-    #Check if phone number exists
-    #If phone number exists
-    # Redirect to default page
-    #If phone number does not exist
-    # Prompt for phone number
-    # Generate random password and update phone number and password to user database
-    # Send password to user by SMS
-    # Redirect to default page
-  } else {
-    echo "<div id='errors'>",$login['ReplyMessage'],"</div>";
-    require('_login_form.php');
-  };
-};
+    #echo json_encode($forgetpassword)."<br />";
+    #echo $password['password'];
 
-function doActionForgetPassword() {
-  $forgetpassword['ResponseCode']= "201";
-  $forgetpassword['ReplyMessage']= "Invalid phone number";
-
-  $new_password = random_str(6, '0123456789');
-
-
-  if($forgetpassword['ResponseCode'] === "200"){
-    echo "New password is ", $new_password;
-  } else {
-    echo "<div id='errors'>",$forgetpassword['ReplyMessage'],"</div>";
-    require('_forgetpassword_form.php');
-  };
-};
-
-function getAction() {
-  $action = $_GET["action"] ;
-
-  if( $action === NULL) {
-    $action = $_POST["action"];
+    if( !$forgetpassword['errors']['UserDoesNotExist'] and !$forgetpassword['errors']['PhoneNumberDoesNotExist']){
+      changePassword();
+      $forgetpassword = AptiloCCSQuery( "viewUser" );
+      sendPassword( $forgetpassword['pwd'], $forgetpassword['phonenumber'] );
+    } else {
+      showErrors( $forgetpassword['errors'] );
+      require('_forgetpassword_form.php');
+    };
   };
 
-  return sanitize( $action );
-};
+  function doActionUpdatePhone(){
+    $updatephone = AptiloCCSQuery( "modifyUser", array('phonenumber' => $_POST['phone']));
+    changePassword();
+    $user = AptiloCCSQuery ( "viewUser" );
+    sendPassword( $user['pwd'], $user['phonenumber'] );
+    #echo $user['pwd'], $user['phonenumber'];
+  };
+
+  function getAction() {
+    $action = $_GET["action"] ;
+
+    if( $action === NULL) {
+      $action = $_POST["action"];
+    };
+
+    return sanitize( $action );
+  };
 
 ?>
