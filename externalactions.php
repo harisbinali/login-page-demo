@@ -36,7 +36,12 @@
     $result = curl_exec($ch);
     curl_close($ch);
 
-    return json_decode( $result, true);
+    $result = json_decode( $result, true );
+    $result['errors'] = validateSCGQuery( $result );
+
+    #echo json_encode($result);
+
+    return $result;
   };
 
   function AptiloCCSQuery ( $method, $args = Array() ) {

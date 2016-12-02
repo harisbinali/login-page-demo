@@ -62,6 +62,21 @@
     return $res;
   };
 
+  function validateSCGQuery( $input ) {
+    switch( $input['ResponseCode'] ) {
+      case "200":
+        $res['Successful'] = true;
+        break;
+      case "408":
+        $res['UserDoesNotExist'] = true;
+        break;
+      default:
+        break;
+    };
+
+    return $res;
+  };
+
   function sentencify( $input ) {
     return ucfirst(strtolower(preg_replace('/(?<!^)([A-Z])/', ' \\1', $input)));
   };

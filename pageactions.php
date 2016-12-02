@@ -25,7 +25,7 @@
   function doActionLogin() {
     $login = SCGQuery( "UserOnlineControl", "Login" );
 
-    #$login['ResponseCode'] = "200";
+    $login['ResponseCode'] = "200";
 
     if($login['ResponseCode'] === "200"){
       echo "Login successful<br />";
