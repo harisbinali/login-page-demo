@@ -1,5 +1,6 @@
 runtime: php55
-env: flex
+api_version: 1
 
-runtime_config:
-  document_root: default
+handlers:
+- url: /.*
+  script : index.php
