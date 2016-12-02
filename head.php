@@ -3,7 +3,7 @@
     require_once 'lib/purl/Purl.php';
   }
   if (!function_exists('random_int')) { //TOTALLY NOT SECURE rand()!!!!
-    require_once 'lib/purl/random_int.php';
+    require_once 'lib/random_int/random_int.php';
   }
   require_once('config.php');
   require_once('functions.php');
