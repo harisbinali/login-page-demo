@@ -98,7 +98,7 @@
     $newpwd = array(
       'password' => random_str(6, '0123456789')
     );
-    $changepassword = AptiloCCSQuery( "modifyUser", $newpwd);
+    $changepassword = AptiloCCSQuery( "modifyUser", $newpwd); # Aptilo
     #$phone = $forgetpassword['phonenumber'];//"+61422222222";
     #echo json_encode($changepassword);
   };

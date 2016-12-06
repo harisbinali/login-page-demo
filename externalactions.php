@@ -1,5 +1,6 @@
 <?php
   function SCGQuery( $Category, $Type ) {
+    global $vars;
 
     $SCG_login_params = array(
       "Vendor" => "ruckus",
@@ -7,8 +8,8 @@
       "APIVersion" => "1.0",
       "RequestCategory" => $Category,
       "RequestType" => $Type,
-      "UE-IP" => $_POST["ip"],
-      "UE-MAC" => $_POST["mac"]
+      "UE-IP" => $vars["ip"],
+      "UE-MAC" => $vars["mac"]
     );
 
     switch($Category) {
@@ -16,8 +17,8 @@
         switch($Type) {
           case "Login":
             $SCG_login_params["UE-Proxy"] = "0" ;
-            $SCG_login_params["UE-Username"] = $_POST["username"];
-            $SCG_login_params["UE-Password"] = $_POST["password"];
+            $SCG_login_params["UE-Username"] = $vars["username"];
+            $SCG_login_params["UE-Password"] = $vars["password"];
             break;
         };
     };
@@ -28,6 +29,7 @@
     $ch = curl_init( NAC_API_BASE_URI );
     # Setup request to send json via POST.
     $payload = json_encode( sanitize( $SCG_login_params ) );
+    #echo $payload;
     curl_setopt( $ch, CURLOPT_POSTFIELDS, $payload );
     curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
     # Return response instead of printing.
@@ -45,6 +47,7 @@
   };
 
   function AptiloCCSQuery ( $method, $args = Array() ) {
+    global $vars;
     $CCS_API_params = array(
       "method" => $method,
       "login" => CCS_API_USERNAME,
@@ -53,10 +56,10 @@
 
     switch($method) {
       case "viewUser":
-        $CCS_API_params['username'] = $_POST["username"];
+        $CCS_API_params['username'] = $vars["username"];
         break;
       case "modifyUser":
-        $CCS_API_params['username'] = $_POST["username"];
+        $CCS_API_params['username'] = $vars["username"];
         $CCS_API_params = array_merge( $CCS_API_params, $args );
         break;
       default:

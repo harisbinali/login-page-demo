@@ -1,19 +1,19 @@
 <?php
 
-  function doAction( $action ) {
+  function doAction( $vars ) {
     if($_SERVER['REQUEST_METHOD'] === 'GET'){
-      $actiondisplay = '_'.$action.'_form.php';
-      if( $action === "" ) {
+      $actiondisplay = '_'.$vars['action'].'_form.php';
+      if( $vars['action'] === NULL ) {
         $actiondisplay = DEFAULT_VIEW;
       };
       require( $actiondisplay );
     } elseif($_SERVER['REQUEST_METHOD'] === 'POST'){
-      switch( $action ) {
+      switch( $vars['action'] ) {
         case "forgetpassword":
           doActionForgetPassword();
           break;
         case "updatephone":
-          doActionUpdatePhone();
+          doActionUpdatePhone( $vars );
           break;
         case "login":
         default:
@@ -61,22 +61,16 @@
     };
   };
 
-  function doActionUpdatePhone(){
-    $updatephone = AptiloCCSQuery( "modifyUser", array('phonenumber' => $_POST['phone']));
+  function doActionUpdatePhone( $vars ){
+    $updatephone = AptiloCCSQuery( "modifyUser", array('phonenumber' => $vars['phone']));
     changePassword();
     $user = AptiloCCSQuery ( "viewUser" );
     sendPassword( $user['pwd'], $user['phonenumber'] );
     #echo $user['pwd'], $user['phonenumber'];
   };
 
-  function getAction() {
-    $action = $_GET["action"] ;
-
-    if( $action === NULL) {
-      $action = $_POST["action"];
-    };
-
-    return sanitize( $action );
+  function getAction( $vars ) {
+    return $vars['action'];
   };
 
 ?>

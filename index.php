@@ -5,7 +5,9 @@
   <body>
     <?php
       require('header.php');
-      doAction( getAction() );
+      $vars = $_GET ? sanitize($_GET) : sanitize($_POST);
+      #echo json_encode($vars);
+      doAction( $vars );
       require('footer.php');
     ?>
   </body>
